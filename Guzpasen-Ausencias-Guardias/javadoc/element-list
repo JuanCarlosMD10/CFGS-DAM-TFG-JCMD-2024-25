@@ -1,0 +1,6 @@
+cfgs.dam.tfg.jcmd.app
+cfgs.dam.tfg.jcmd.controllers
+cfgs.dam.tfg.jcmd.exceptions
+cfgs.dam.tfg.jcmd.models
+cfgs.dam.tfg.jcmd.repositories
+cfgs.dam.tfg.jcmd.services
