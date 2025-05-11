@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Ausencia</title>
+    <link rel="stylesheet" href="../CSS/eliminacion-ausencia.css">
+    <script src="../JAVASCRIPT/eliminacion-ausencia.js" defer></script>
+</head>
+
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <a href="https://blogsaverroes.juntadeandalucia.es/iestorrredelosguzmanes/">
+                    <img src="../IMAGENES/logo.png" alt="Logo del centro">
+                </a>
+            </div>
+            <a href=""><button class="home">INICIO</button></a>
+            <a href="../HTML/index-ausencia-guardia.html"><button class="back-button">←</button></a>
+            <div class="title">AUSENCIAS Y GUARDIAS</div>
+            <div class="user">USUARIO</div>
+            <div class="close">❌</div>
+        </header>
+
+        <div class="list-container">
+            <div class="absence-list-container">
+                <h2>Ausencias Registradas</h2>
+            </div>
+            <div class="absence-list-container">
+                <ul id="absence-list" class="absence-list">
+                    <li>
+                        <label>
+                            <input type="radio" name="ausencia" value="1" class="absence-checkbox">
+                            Juan Pérez - 11/05/2025 - PRIMERA/SEGUNDA
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="ausencia" value="2" class="absence-checkbox">
+                            Laura García - 12/05/2025 - SEXTA/SEXTA
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="ausencia" value="3" class="absence-checkbox">
+                            Carlos Ruiz - 13/05/2025 - CUARTA/CUARTA
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="ausencia" value="4" class="absence-checkbox">
+                            Ana López - 14/05/2025 - PRIMERA/SEXTA
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="ausencia" value="1" class="absence-checkbox">
+                            Juan Pérez - 11/05/2025 - SEGUNDA/TERCERA
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="radio" name="ausencia" value="2" class="absence-checkbox">
+                            Laura García - 12/05/2025 - QUINTA/QUINTA
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Mensaje de éxito -->
+            <div id="success-message" class="success-message">
+                Ausencia eliminada correctamente.
+            </div>
+
+            <div class="list-buttons">
+                <a href="../HTML/index-ausencia-guardia.html">
+                    <button type="button" class="cancel-btn">CANCELAR</button>
+                </a>
+                <button type="button" class="confirm-btn">CONFIRMAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de reconfirmación -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <h3>¿Estás seguro de que deseas eliminar la ausencia?</h3>
+            <div class="modal-buttons">
+                <button class="cancel-btn" id="cancel-btn-modal">Cancelar</button>
+                <button class="confirm-btn" id="confirm-btn-modal">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../JS/eliminacion-ausencia.js"></script>
+</body>
+
+</html>

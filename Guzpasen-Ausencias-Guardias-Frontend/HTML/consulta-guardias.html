@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consulta Guardias</title>
+    <link rel="stylesheet" href="../CSS/consulta-guardias.css" />
+    <script src="../JAVASCRIPT/consulta-guardia.js"></script>
+</head>
+
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <a href="https://blogsaverroes.juntadeandalucia.es/iestorrredelosguzmanes/">
+                    <img src="../IMAGENES/logo.png" alt="Logo del centro">
+                </a>
+            </div>
+            <a href=""><button class="home">INICIO</button></a>
+            <a href="../HTML/index-ausencia-guardia.html"><button class="back-button">←</button></a>
+            <div class="title">AUSENCIAS Y GUARDIAS</div>
+            <div class="user">USUARIO</div>
+            <div class="close">❌</div>
+        </header>
+
+        <div class="filter-container">
+            <form class="filter-form">
+                <!-- Indicaciones para seleccionar la fecha -->
+                <div class="form-group">
+                    <label for="fecha">INDICAR FECHA</label>
+                    <input type="date" name="fecha" required />
+                </div>
+
+                <!-- Indicaciones para seleccionar la franja horaria de inicio -->
+                <div class="form-group">
+                    <label for="franjaInicio">INDICAR HORA DE INICIO</label>
+                    <select id="franjaInicio" name="franjaInicio" required>
+                        <option value="">Selecciona inicio</option>
+                        <option value="PRIMERA">PRIMERA</option>
+                        <option value="SEGUNDA">SEGUNDA</option>
+                        <option value="TERCERA">TERCERA</option>
+                        <option value="CUARTA">CUARTA</option>
+                        <option value="QUINTA">QUINTA</option>
+                        <option value="SEXTA">SEXTA</option>
+                    </select>
+                </div>
+
+                <!-- Indicaciones para seleccionar la franja horaria de fin -->
+                <div class="form-group">
+                    <label for="franjaFin">INDICAR HORA DE FIN</label>
+                    <select id="franjaFin" name="franjaFin" required>
+                        <option value="">Selecciona fin</option>
+                        <option value="PRIMERA">PRIMERA</option>
+                        <option value="SEGUNDA">SEGUNDA</option>
+                        <option value="TERCERA">TERCERA</option>
+                        <option value="CUARTA">CUARTA</option>
+                        <option value="QUINTA">QUINTA</option>
+                        <option value="SEXTA">SEXTA</option>
+                    </select>
+                </div>
+
+                <!-- Botón para aplicar los filtros -->
+                <button type="submit" class="filter-button">APLICAR FILTROS</button>
+            </form>
+
+            <div class="list-container">
+                <div class="absence-list-container">
+                    <ul id="absence-list" class="absence-list">
+                        <li>
+                            <label>
+                                Juan Pérez - 11/05/2025 - PRIMERA/SEGUNDA
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                Laura García - 12/05/2025 - SEXTA/SEXTA
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                Carlos Ruiz - 13/05/2025 - CUARTA/CUARTA
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                Ana López - 14/05/2025 - PRIMERA/SEXTA
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                Juan Pérez - 11/05/2025 - SEGUNDA/TERCERA
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                Laura García - 12/05/2025 - QUINTA/QUINTA
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Botón para exportar los resultados a PDF -->
+                <button class="export-button">EXPORTAR A PDF</button>
+            </div>
+        </div>
+</body>
+
+</html>
