@@ -1,72 +1,61 @@
 package cfgs.dam.tfg.jcmd.services;
 
-import cfgs.dam.tfg.jcmd.models.AusenciaModelo;
-import cfgs.dam.tfg.jcmd.models.UsuarioModelo;
-
-import java.time.LocalDate;
 import java.util.List;
 
+import cfgs.dam.tfg.jcmd.dto.AusenciaDTO;
+import cfgs.dam.tfg.jcmd.models.AusenciaModelo;
+
 /**
- * Interfaz que define los servicios relacionados con la gestión de ausencias.
- * 
- * Esta interfaz proporciona métodos para realizar operaciones CRUD sobre las
- * ausencias, así como métodos para obtener ausencias filtradas por fecha o por
- * profesor.
+ * Interfaz para el servicio de gestión de ausencias. Define las operaciones
+ * disponibles para registrar, modificar, eliminar y consultar ausencias.
  */
 public interface AusenciaService {
 
 	/**
-	 * Obtiene todas las ausencias registradas.
-	 * 
-	 * @return una lista de todas las ausencias.
+	 * Registra una nueva ausencia en el sistema.
+	 *
+	 * @param ausencia Modelo de ausencia a registrar.
+	 * @return DTO con los datos de la ausencia registrada.
 	 */
-	List<AusenciaModelo> findAll();
+	AusenciaDTO registrarAusencia(AusenciaModelo ausencia);
 
 	/**
-	 * Encuentra todas las ausencias correspondientes a una fecha específica.
-	 * 
-	 * @param fecha la fecha de las ausencias.
-	 * @return una lista de ausencias para la fecha proporcionada.
+	 * Modifica una ausencia existente identificada por su id.
+	 *
+	 * @param id       Identificador de la ausencia a modificar.
+	 * @param ausencia Modelo con los datos actualizados de la ausencia.
+	 * @return DTO con los datos de la ausencia modificada.
 	 */
-	List<AusenciaModelo> findByFecha(LocalDate fecha);
+	AusenciaDTO modificarAusencia(Long id, AusenciaModelo ausencia);
 
 	/**
-	 * Encuentra todas las ausencias asociadas a un profesor específico.
-	 * 
-	 * @param profesor el profesor cuyas ausencias se desean obtener.
-	 * @return una lista de ausencias asociadas al profesor dado.
+	 * Elimina una ausencia por su identificador.
+	 *
+	 * @param id Identificador de la ausencia a eliminar.
 	 */
-	List<AusenciaModelo> findByProfesor(UsuarioModelo profesor);
+	void eliminarAusencia(Long id);
 
 	/**
-	 * Crea una nueva ausencia en el sistema.
-	 * 
-	 * @param ausencia el objeto de tipo AusenciaModelo que se va a crear.
-	 * @return la ausencia creada.
+	 * Consulta las ausencias filtrando por su estado.
+	 *
+	 * @param estado Estado para filtrar las ausencias.
+	 * @return Lista de DTOs con las ausencias que cumplen el filtro.
 	 */
-	AusenciaModelo createAusencia(AusenciaModelo ausencia);
+	List<AusenciaDTO> consultarAusencias(AusenciaModelo.Estado estado);
 
 	/**
-	 * Encuentra una ausencia por su identificador único.
-	 * 
-	 * @param idAusencia el identificador único de la ausencia.
-	 * @return la ausencia correspondiente al identificador, o null si no existe.
+	 * Obtiene una ausencia por su identificador.
+	 *
+	 * @param id Identificador de la ausencia.
+	 * @return DTO con los datos de la ausencia.
 	 */
-	AusenciaModelo findAusenciaByIdAusencia(Long idAusencia);
+	AusenciaDTO obtenerAusencia(Long id);
 
 	/**
-	 * Actualiza una ausencia existente en el sistema.
-	 * 
-	 * @param ausencia el objeto de tipo AusenciaModelo con la información
-	 *                 actualizada.
-	 * @return la ausencia actualizada.
+	 * Obtiene todas las ausencias asociadas a un profesor específico.
+	 *
+	 * @param idProfesor Identificador del profesor.
+	 * @return Lista de DTOs con las ausencias del profesor.
 	 */
-	AusenciaModelo updateAusencia(AusenciaModelo ausencia);
-
-	/**
-	 * Elimina una ausencia del sistema mediante su identificador único.
-	 * 
-	 * @param idAusencia el identificador único de la ausencia a eliminar.
-	 */
-	void deleteAusenciaById(Long idAusencia);
+	List<AusenciaDTO> obtenerAusenciasPorProfesor(Long idProfesor);
 }

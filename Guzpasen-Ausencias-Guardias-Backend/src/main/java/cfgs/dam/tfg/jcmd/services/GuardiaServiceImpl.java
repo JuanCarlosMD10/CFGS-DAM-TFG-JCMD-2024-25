@@ -2,119 +2,192 @@ package cfgs.dam.tfg.jcmd.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cfgs.dam.tfg.jcmd.exceptions.GuardiaCreationException;
-import cfgs.dam.tfg.jcmd.exceptions.GuardiaNotFoundException;
+import cfgs.dam.tfg.jcmd.dto.GuardiaDTO;
+import cfgs.dam.tfg.jcmd.models.AusenciaModelo;
 import cfgs.dam.tfg.jcmd.models.GuardiaModelo;
 import cfgs.dam.tfg.jcmd.models.UsuarioModelo;
+import cfgs.dam.tfg.jcmd.models.ZonaModelo;
+import cfgs.dam.tfg.jcmd.repositories.AusenciaRepository;
 import cfgs.dam.tfg.jcmd.repositories.GuardiaRepository;
+import cfgs.dam.tfg.jcmd.repositories.UsuarioRepository;
+import cfgs.dam.tfg.jcmd.repositories.ZonaRepository;
 
-/**
- * Implementación del servicio de gestión de guardias.
- * 
- * Esta clase proporciona la lógica de negocio para gestionar las guardias en el
- * sistema, incluyendo operaciones como la creación, búsqueda, actualización y
- * eliminación de guardias.
- */
 @Service
 public class GuardiaServiceImpl implements GuardiaService {
 
 	@Autowired
 	private GuardiaRepository guardiaRepository;
 
+	@Autowired
+	private AusenciaRepository ausenciaRepository;
+
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private ZonaRepository zonaRepository;
+
 	/**
-	 * Obtiene todas las guardias registradas en el sistema.
-	 * 
-	 * @return una lista de todas las guardias.
+	 * Asigna una nueva guardia, actualizando el estado de la ausencia asociada.
+	 *
+	 * @param guardiaDTO DTO con los datos de la guardia a asignar.
+	 * @return DTO de la guardia asignada.
+	 * @throws IllegalArgumentException si no se encuentra la ausencia o la zona
+	 *                                  asociada.
 	 */
 	@Override
-	public List<GuardiaModelo> findAll() {
-		return guardiaRepository.findAll();
+	public GuardiaDTO asignarGuardia(GuardiaDTO guardiaDTO) {
+		if (guardiaDTO.getFecha() == null) {
+			Optional<AusenciaModelo> ausenciaOpt = ausenciaRepository.findById(guardiaDTO.getIdAusencia());
+			if (ausenciaOpt.isPresent()) {
+				guardiaDTO.setFecha(ausenciaOpt.get().getFecha());
+			} else {
+				throw new IllegalArgumentException("No se encontró la ausencia con ID: " + guardiaDTO.getIdAusencia());
+			}
+		}
+
+		Optional<AusenciaModelo> ausenciaOpt = ausenciaRepository.findById(guardiaDTO.getIdAusencia());
+		if (ausenciaOpt.isEmpty()) {
+			throw new IllegalArgumentException("No se encontró la ausencia con ID: " + guardiaDTO.getIdAusencia());
+		}
+
+		AusenciaModelo ausencia = ausenciaOpt.get();
+
+		if (guardiaDTO.getIdAula() == null) {
+			Long idZona = ausencia.getIdZona().getIdZona();
+
+			Optional<ZonaModelo> zonaOpt = zonaRepository.findById(idZona);
+			if (zonaOpt.isPresent()) {
+				guardiaDTO.setIdAula(zonaOpt.get().getIdZona());
+			} else {
+				throw new IllegalArgumentException("No se encontró una zona con ID: " + idZona);
+			}
+		}
+
+		ausencia.setEstado(AusenciaModelo.Estado.GUARDIA_ASIGNADA);
+		ausenciaRepository.save(ausencia);
+
+		GuardiaModelo guardia = convertToEntity(guardiaDTO);
+		GuardiaModelo guardiaGuardada = guardiaRepository.save(guardia);
+		return convertToDTO(guardiaGuardada);
 	}
 
 	/**
-	 * Encuentra todas las guardias correspondientes a una fecha específica.
-	 * 
-	 * @param fecha la fecha de las guardias.
-	 * @return una lista de guardias para la fecha proporcionada.
+	 * Consulta guardias filtrando por fecha.
+	 *
+	 * @param fecha Fecha para filtrar las guardias, puede ser null para obtener
+	 *              todas.
+	 * @return Lista de DTOs de guardias.
 	 */
 	@Override
-	public List<GuardiaModelo> findByFecha(LocalDate fecha) {
-		return guardiaRepository.findByFecha(fecha);
+	public List<GuardiaDTO> consultarGuardias(LocalDate fecha) {
+		List<GuardiaModelo> guardias;
+
+		if (fecha != null) {
+			guardias = guardiaRepository.findByFecha(fecha);
+		} else {
+			guardias = guardiaRepository.findAll();
+		}
+
+		return guardias.stream().map(this::convertToDTO).collect(Collectors.toList());
 	}
 
 	/**
-	 * Encuentra todas las guardias asignadas a un profesor específico.
-	 * 
-	 * @param profesor el profesor cuyas guardias se desean obtener.
-	 * @return una lista de guardias asignadas al profesor dado.
+	 * Obtiene una guardia por su id.
+	 *
+	 * @param id Identificador de la guardia.
+	 * @return DTO de la guardia encontrada.
+	 * @throws RuntimeException si no se encuentra la guardia.
 	 */
 	@Override
-	public List<GuardiaModelo> findByProfesor(UsuarioModelo profesor) {
-		return guardiaRepository.findByIdProfesor(profesor);
-	}
-
-	/**
-	 * Crea una nueva guardia en el sistema.
-	 * 
-	 * @param guardia el objeto de tipo GuardiaModelo que se va a crear.
-	 * @return la guardia creada.
-	 * @throws GuardiaCreationException si ocurre un error al intentar crear la
-	 *                                  guardia.
-	 */
-	@Override
-	public GuardiaModelo createGuardia(GuardiaModelo guardia) {
-		try {
-			return guardiaRepository.save(guardia);
-		} catch (Exception e) {
-			throw new GuardiaCreationException("Error al crear la guardia", e);
+	public GuardiaDTO obtenerGuardia(Long id) {
+		Optional<GuardiaModelo> guardia = guardiaRepository.findById(id);
+		if (guardia.isPresent()) {
+			return convertToDTO(guardia.get());
+		} else {
+			throw new RuntimeException("Guardia no encontrada");
 		}
 	}
 
 	/**
-	 * Encuentra una guardia por su identificador único.
-	 * 
-	 * @param idGuardia el identificador único de la guardia.
-	 * @return la guardia correspondiente al identificador proporcionado.
-	 * @throws GuardiaNotFoundException si no se encuentra la guardia con el ID
-	 *                                  especificado.
+	 * Convierte una entidad GuardiaModelo a su DTO.
+	 *
+	 * @param guardia Entidad GuardiaModelo.
+	 * @return DTO correspondiente.
 	 */
-	@Override
-	public GuardiaModelo findGuardiaByIdGuardia(Long idGuardia) {
-		GuardiaModelo guardia = guardiaRepository.findGuardiaModeloByIdGuardia(idGuardia);
-		if (guardia == null) {
-			throw new GuardiaNotFoundException("Guardia no encontrada con ID: " + idGuardia);
+	private GuardiaDTO convertToDTO(GuardiaModelo guardia) {
+		GuardiaDTO dto = new GuardiaDTO();
+		dto.setIdGuardia(guardia.getIdGuardia());
+		dto.setFecha(guardia.getFecha());
+		dto.setHoraInicio(guardia.getHoraInicio() != null ? guardia.getHoraInicio().name() : null);
+		dto.setHoraFin(guardia.getHoraFin() != null ? guardia.getHoraFin().name() : null);
+
+		if (guardia.getIdProfesor() != null) {
+			dto.setIdProfesor(guardia.getIdProfesor().getIdUsuario());
+			dto.setNombreProfesor(guardia.getIdProfesor().getNombre() + " " + guardia.getIdProfesor().getApellidos());
 		}
+
+		if (guardia.getIdAula() != null) {
+			dto.setIdAula(guardia.getIdAula().getIdZona());
+			dto.setNombreAula(guardia.getIdAula().getNombre());
+		}
+
+		if (guardia.getIdAusencia() != null) {
+			dto.setIdAusencia(guardia.getIdAusencia().getIdAusencia());
+		}
+
+		return dto;
+	}
+
+	/**
+	 * Convierte un DTO GuardiaDTO a la entidad GuardiaModelo.
+	 *
+	 * @param dto DTO GuardiaDTO.
+	 * @return Entidad GuardiaModelo.
+	 * @throws RuntimeException si no se encuentra el profesor, aula o ausencia
+	 *                          indicados.
+	 */
+	private GuardiaModelo convertToEntity(GuardiaDTO dto) {
+		GuardiaModelo guardia = new GuardiaModelo();
+		guardia.setIdGuardia(dto.getIdGuardia());
+		guardia.setFecha(dto.getFecha());
+
+		if (dto.getHoraInicio() != null) {
+			guardia.setHoraInicio(GuardiaModelo.HoraInicio.valueOf(dto.getHoraInicio()));
+		} else {
+			guardia.setHoraInicio(null);
+		}
+
+		if (dto.getHoraFin() != null) {
+			guardia.setHoraFin(GuardiaModelo.HoraFin.valueOf(dto.getHoraFin()));
+		} else {
+			guardia.setHoraFin(null);
+		}
+
+		if (dto.getIdProfesor() != null) {
+			UsuarioModelo profesor = usuarioRepository.findById(dto.getIdProfesor())
+					.orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
+			guardia.setIdProfesor(profesor);
+		}
+
+		if (dto.getIdAula() != null) {
+			ZonaModelo aula = zonaRepository.findById(dto.getIdAula())
+					.orElseThrow(() -> new RuntimeException("Aula no encontrada"));
+			guardia.setIdAula(aula);
+		}
+
+		if (dto.getIdAusencia() != null) {
+			AusenciaModelo ausencia = ausenciaRepository.findById(dto.getIdAusencia())
+					.orElseThrow(() -> new RuntimeException("Ausencia no encontrada"));
+			guardia.setIdAusencia(ausencia);
+		}
+
 		return guardia;
-	}
-
-	/**
-	 * Actualiza una guardia existente en el sistema.
-	 * 
-	 * @param guardia el objeto de tipo GuardiaModelo con la información
-	 *                actualizada.
-	 * @return la guardia actualizada.
-	 */
-	@Override
-	public GuardiaModelo updateGuardia(GuardiaModelo guardia) {
-		return guardiaRepository.save(guardia);
-	}
-
-	/**
-	 * Elimina una guardia del sistema mediante su identificador único.
-	 * 
-	 * @param idGuardia el identificador único de la guardia a eliminar.
-	 * @throws GuardiaNotFoundException si no se encuentra la guardia con el ID
-	 *                                  especificado.
-	 */
-	@Override
-	public void deleteGuardiaById(Long idGuardia) {
-		if (!guardiaRepository.existsById(idGuardia)) {
-			throw new GuardiaNotFoundException("No se puede eliminar. Guardia no encontrada con ID: " + idGuardia);
-		}
-		guardiaRepository.deleteById(idGuardia);
 	}
 }

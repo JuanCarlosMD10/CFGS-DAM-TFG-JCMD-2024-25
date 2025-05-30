@@ -58,7 +58,7 @@ body {
 
 .home {
     font-size: 1.2rem;
-    background: rgba(146, 146, 146, 0.84);
+    background: #D9D9D9;
     border: none;
     border-radius: 0.5rem;
     padding: 0.8rem 1.5rem;
@@ -79,13 +79,14 @@ body {
 
 .back-button {
     font-size: 2.2rem;
-    background: rgba(146, 146, 146, 0.84);
+    background: #D9D9D9;
     border: none;
     border-radius: 0.5rem;
     padding: 0.2rem 1.5rem;
     cursor: pointer;
     margin-right: 2rem;
     transition: transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .back-button:hover {
@@ -139,9 +140,15 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1rem 2rem;
     align-items: center;
     justify-content: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
 }
 
 .filter-form label {
@@ -150,7 +157,6 @@ body {
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     color: #333;
-    display: block;
 }
 
 .filter-form input[type="date"],
@@ -160,31 +166,28 @@ body {
     border: 1px solid #ccc;
     border-radius: 6px;
     background-color: white;
-    min-width: 160px;
-    display: block;
-    width: 100%;
-    margin-bottom: 1rem;
 }
 
 .filter-button {
-    background-color: #3498db;
+    background-color: #2980b9;
     color: white;
-    padding: 0.7rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.9rem 2rem;
     border: none;
     border-radius: 6px;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    font-weight: bold;
 }
 
 .filter-button:hover {
-    background-color: #2980b9;
+    background-color: #1f6391;
 }
 
 /* BOTÓN DE EXPORTAR */
 .export-button {
     margin-top: 1rem;
-    background-color: #27ae60;
+    background-color: #28A745;
     color: white;
     padding: 0.8rem 2rem;
     border: none;
@@ -202,7 +205,7 @@ body {
 /* LISTA DE AUSENCIAS */
 .absence-list-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 1000px;
     background: rgba(255, 255, 255, 0.9);
     padding: 1.5rem;
     border-radius: 12px;
@@ -293,7 +296,7 @@ body {
 }
 
 .cancel-btn {
-    background-color: #f1c40f;
+    background-color: #FFC107;
     color: black;
 }
 
@@ -302,7 +305,7 @@ body {
 }
 
 .confirm-btn {
-    background-color: #27ae60;
+    background-color: #28A745;
     color: white;
 }
 

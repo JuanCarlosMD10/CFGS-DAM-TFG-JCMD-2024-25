@@ -1,55 +1,71 @@
 package cfgs.dam.tfg.jcmd.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import cfgs.dam.tfg.jcmd.models.GuardiaModelo;
+import cfgs.dam.tfg.jcmd.dto.GuardiaDTO;
 import cfgs.dam.tfg.jcmd.services.GuardiaService;
 
 /**
- * Controlador REST encargado de gestionar las guardias asignadas a los
- * profesores. Permite consultar todas las guardias, registrar una nueva y
- * buscar una por su ID.
+ * Controlador REST para la gestión de guardias de profesores. Proporciona
+ * endpoints para registrar nuevas guardias, consultar por fecha y obtener
+ * información detallada de una guardia específica.
  */
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/guardias")
+@RequestMapping("/guardias")
 public class GuardiaController {
 
 	@Autowired
 	private GuardiaService guardiaService;
 
 	/**
-	 * Devuelve todas las guardias almacenadas en el sistema.
+	 * Asigna una nueva guardia a un profesor.
+	 *
+	 * @param guardia Objeto GuardiaDTO con los datos de la guardia a registrar.
+	 * @return GuardiaDTO con los datos de la guardia registrada.
 	 */
-	@GetMapping
-	public List<GuardiaModelo> obtenerTodasLasGuardias() {
-		return guardiaService.findAll();
+	@PostMapping("/registrar")
+	public GuardiaDTO registrarGuardia(@RequestBody GuardiaDTO guardia) {
+		return guardiaService.asignarGuardia(guardia);
 	}
 
 	/**
-	 * Registra una nueva guardia con los datos proporcionados.
+	 * Consulta las guardias de los profesores. Si se proporciona una fecha, filtra
+	 * las guardias por esa fecha; si no, devuelve todas.
 	 *
-	 * @param guardia datos de la guardia a crear
-	 * @return la guardia creada
+	 * @param fecha (Opcional) Fecha en formato ISO (yyyy-MM-dd).
+	 * @return Lista de GuardiaDTO que coinciden con el filtro aplicado.
 	 */
-	@PostMapping
-	public ResponseEntity<GuardiaModelo> crearGuardia(@RequestBody GuardiaModelo guardia) {
-		GuardiaModelo nuevaGuardia = guardiaService.createGuardia(guardia);
-		return ResponseEntity.ok(nuevaGuardia);
+	@GetMapping("/consultar")
+	@CrossOrigin(origins = "*")
+	public List<GuardiaDTO> consultarGuardias(@RequestParam(required = false) String fecha) {
+		if (fecha != null) {
+			LocalDate fechaParsed = LocalDate.parse(fecha);
+			return guardiaService.consultarGuardias(fechaParsed);
+		} else {
+			return guardiaService.consultarGuardias(null);
+		}
 	}
 
 	/**
-	 * Busca una guardia concreta a partir de su identificador.
+	 * Obtiene la información de una guardia específica mediante su ID.
 	 *
-	 * @param id identificador de la guardia
-	 * @return la guardia encontrada, si existe
+	 * @param id ID de la guardia.
+	 * @return GuardiaDTO con los datos de la guardia solicitada.
 	 */
 	@GetMapping("/{id}")
-	public ResponseEntity<GuardiaModelo> buscarGuardiaPorId(@PathVariable Long id) {
-		GuardiaModelo guardia = guardiaService.findGuardiaByIdGuardia(id);
-		return ResponseEntity.ok(guardia);
+	public GuardiaDTO obtenerGuardia(@PathVariable Long id) {
+		return guardiaService.obtenerGuardia(id);
 	}
 }

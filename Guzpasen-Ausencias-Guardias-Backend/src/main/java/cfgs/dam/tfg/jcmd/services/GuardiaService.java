@@ -1,71 +1,40 @@
 package cfgs.dam.tfg.jcmd.services;
 
-import cfgs.dam.tfg.jcmd.models.GuardiaModelo;
-import cfgs.dam.tfg.jcmd.models.UsuarioModelo;
-
 import java.time.LocalDate;
 import java.util.List;
 
+import cfgs.dam.tfg.jcmd.dto.GuardiaDTO;
+
 /**
- * Interfaz que define los servicios relacionados con la gestión de guardias.
- * 
- * Esta interfaz proporciona los métodos necesarios para gestionar las guardias,
- * tales como la creación, actualización, eliminación y consulta de guardias.
+ * Interfaz que define los métodos para la gestión de las guardias en el
+ * sistema. Permite asignar nuevas guardias, consultar guardias por fecha y
+ * obtener guardias por su identificador.
  */
 public interface GuardiaService {
 
 	/**
-	 * Obtiene todas las guardias registradas.
+	 * Asigna una nueva guardia al sistema.
 	 * 
-	 * @return una lista de todas las guardias.
+	 * @param guardia DTO que representa la guardia a asignar.
+	 * @return DTO de la guardia que ha sido asignada.
 	 */
-	List<GuardiaModelo> findAll();
+	GuardiaDTO asignarGuardia(GuardiaDTO guardia);
 
 	/**
-	 * Encuentra todas las guardias correspondientes a una fecha específica.
+	 * Consulta las guardias existentes en el sistema, filtrando por fecha.
 	 * 
-	 * @param fecha la fecha de las guardias.
-	 * @return una lista de guardias para la fecha proporcionada.
+	 * @param fecha Fecha para filtrar las guardias.
+	 * @return Lista de DTOs de guardias correspondientes a la fecha proporcionada.
 	 */
-	List<GuardiaModelo> findByFecha(LocalDate fecha);
+	List<GuardiaDTO> consultarGuardias(LocalDate fecha);
 
 	/**
-	 * Encuentra todas las guardias asignadas a un profesor específico.
+	 * Obtiene una guardia por su identificador.
 	 * 
-	 * @param profesor el profesor cuyas guardias se desean obtener.
-	 * @return una lista de guardias asignadas al profesor dado.
+	 * @param id Identificador de la guardia.
+	 * @return DTO de la guardia correspondiente al id proporcionado.
+	 * @throws RuntimeException si no se encuentra la guardia con el id
+	 *                          proporcionado.
 	 */
-	List<GuardiaModelo> findByProfesor(UsuarioModelo profesor);
-
-	/**
-	 * Crea una nueva guardia en el sistema.
-	 * 
-	 * @param guardia el objeto de tipo GuardiaModelo que se va a crear.
-	 * @return la guardia creada.
-	 */
-	GuardiaModelo createGuardia(GuardiaModelo guardia);
-
-	/**
-	 * Encuentra una guardia por su identificador único.
-	 * 
-	 * @param idGuardia el identificador único de la guardia.
-	 * @return la guardia correspondiente al identificador proporcionado.
-	 */
-	GuardiaModelo findGuardiaByIdGuardia(Long idGuardia);
-
-	/**
-	 * Actualiza una guardia existente en el sistema.
-	 * 
-	 * @param guardia el objeto de tipo GuardiaModelo con la información
-	 *                actualizada.
-	 * @return la guardia actualizada.
-	 */
-	GuardiaModelo updateGuardia(GuardiaModelo guardia);
-
-	/**
-	 * Elimina una guardia del sistema mediante su identificador único.
-	 * 
-	 * @param idGuardia el identificador único de la guardia a eliminar.
-	 */
-	void deleteGuardiaById(Long idGuardia);
+	GuardiaDTO obtenerGuardia(Long id);
 }

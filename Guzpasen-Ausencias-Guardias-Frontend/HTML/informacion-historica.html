@@ -30,13 +30,13 @@
                 <!-- Indicaciones para seleccionar la fecha -->
                 <div class="form-group">
                     <label for="fecha">INDICAR FECHA</label>
-                    <input type="date" name="fecha" required />
+                    <input type="date" name="fecha"/>
                 </div>
 
-                <!-- Indicaciones para seleccionar la franja horaria de inicio -->
+                <!-- Indicaciones para seleccionar la hora de inicio -->
                 <div class="form-group">
-                    <label for="franjaInicio">INDICAR HORA DE INICIO</label>
-                    <select id="franjaInicio" name="franjaInicio" required>
+                    <label for="horaInicio">INDICAR HORA DE INICIO</label>
+                    <select id="horaInicio" name="horaInicio">
                         <option value="">Selecciona inicio</option>
                         <option value="PRIMERA">PRIMERA</option>
                         <option value="SEGUNDA">SEGUNDA</option>
@@ -47,10 +47,10 @@
                     </select>
                 </div>
 
-                <!-- Indicaciones para seleccionar la franja horaria de fin -->
+                <!-- Indicaciones para seleccionar la hora de fin -->
                 <div class="form-group">
-                    <label for="franjaFin">INDICAR HORA DE FIN</label>
-                    <select id="franjaFin" name="franjaFin" required>
+                    <label for="horaFin">INDICAR HORA DE FIN</label>
+                    <select id="horaFin" name="horaFin">
                         <option value="">Selecciona fin</option>
                         <option value="PRIMERA">PRIMERA</option>
                         <option value="SEGUNDA">SEGUNDA</option>
@@ -68,41 +68,12 @@
             <div class="list-container">
                 <div class="absence-list-container">
                     <ul id="absence-list" class="absence-list">
-                        <li>
-                            <label>
-                                Juan Pérez - 11/05/2025 - PRIMERA/SEGUNDA
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                Laura García - 12/05/2025 - SEXTA/SEXTA
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                Carlos Ruiz - 13/05/2025 - CUARTA/CUARTA
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                Ana López - 14/05/2025 - PRIMERA/SEXTA
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                Juan Pérez - 11/05/2025 - SEGUNDA/TERCERA
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                Laura García - 12/05/2025 - QUINTA/QUINTA
-                            </label>
-                        </li>
+                        <!-- Los datos se insertarán dinámicamente -->
                     </ul>
                 </div>
 
                 <!-- Botón para exportar los resultados a PDF -->
-                <button class="export-button">EXPORTAR A PDF</button>
+                <!-- <button class="export-button">EXPORTAR A PDF</button> -->
             </div>
         </div>
 </body>

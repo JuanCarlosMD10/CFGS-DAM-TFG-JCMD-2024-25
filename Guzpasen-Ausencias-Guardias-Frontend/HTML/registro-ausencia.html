@@ -2,12 +2,11 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registrar Ausencia</title>
-    <link rel="stylesheet" href="../CSS/registro-ausencia.css">
+    <link rel="stylesheet" href="../CSS/registro-ausencia.css" />
     <script src="../JAVASCRIPT/registro-ausencia.js"></script>
-
 </head>
 
 <body>
@@ -16,7 +15,7 @@
         <header class="header">
             <div class="logo">
                 <a href="https://blogsaverroes.juntadeandalucia.es/iestorrredelosguzmanes/"><img
-                        src="../IMAGENES/logo.png" alt="Logo del centro"></a>
+                        src="../IMAGENES/logo.png" alt="Logo del centro" /></a>
             </div>
             <a href=""><button class="home">INICIO</button></a>
             <a href="../HTML/index-ausencia-guardia.html"><button class="back-button">←</button></a>
@@ -29,24 +28,18 @@
             <form class="absence-form">
                 <div class="form-group">
                     <label for="date">INDICAR FECHA</label>
-                    <input type="date" id="date" name="date" required>
+                    <input type="date" id="date" name="date" required />
                 </div>
 
                 <div class="form-group">
                     <label for="reason">ESPECIFICAR MOTIVO</label>
-                    <select id="reason" name="reason" required>
-                        <option value="" disabled selected>Seleccione un motivo</option>
-                        <option value="enfermedad">Enfermedad</option>
-                        <option value="permiso">Permiso retribuido</option>
-                        <option value="personal">Asuntos personales</option>
-                        <option value="formacion">Formación</option>
-                    </select>
+                    <textarea id="reason" name="reason" maxlength="255" placeholder="Escribe el motivo de su ausencia..." required></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="schedule">INDICAR HORARIO</label>
                     <div class="time-range">
-                        <select id="franjaInicio" name="franjaInicio" required>
+                        <select id="horaInicio" name="horaInicio" required>
                             <option value="">Selecciona inicio</option>
                             <option value="PRIMERA">PRIMERA</option>
                             <option value="SEGUNDA">SEGUNDA</option>
@@ -56,7 +49,7 @@
                             <option value="SEXTA">SEXTA</option>
                         </select>
                         <span>a</span>
-                        <select id="franjaFin" name="franjaFin" required>
+                        <select id="horaFin" name="horaFin" required>
                             <option value="">Selecciona fin</option>
                             <option value="PRIMERA">PRIMERA</option>
                             <option value="SEGUNDA">SEGUNDA</option>
@@ -70,7 +63,7 @@
 
                 <div class="form-group">
                     <label for="document">ADJUNTAR DOCUMENTO DE LAS TAREAS</label>
-                    <input type="file" id="document" name="document" accept=".pdf,.jpg,.png">
+                    <input type="file" id="document" name="document" accept=".pdf,.jpg,.png" />
                 </div>
 
                 <div class="form-group full-width">
@@ -84,8 +77,7 @@
                 </div>
 
                 <div class="form-buttons">
-                    <a href="../HTML/index-ausencia-guardia.html"><button type="button"
-                            class="cancel-btn">CANCELAR</button></a>
+                    <a href="../HTML/index-ausencia-guardia.html"><button type="button" class="cancel-btn">CANCELAR</button></a>
                     <button type="submit" class="confirm-btn">CONFIRMAR</button>
                 </div>
             </form>

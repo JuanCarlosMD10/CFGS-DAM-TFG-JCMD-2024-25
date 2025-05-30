@@ -1,57 +1,97 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('.absence-form');
     const successMessage = document.getElementById('success-message');
-    const franjaInicio = document.getElementById('franjaInicio');
-    const franjaFin = document.getElementById('franjaFin');
-    const fechaInput = document.getElementById('date'); // ⬅️ Nuevo
-    const franjas = ["PRIMERA", "SEGUNDA", "TERCERA", "CUARTA", "QUINTA", "SEXTA"];
+    const horaInicio = document.getElementById('horaInicio');
+    const horaFin = document.getElementById('horaFin');
+    const fechaInput = document.getElementById('date');
+    const comentarioTareas = document.getElementById('comentarioTareas');
+    const motivo = document.getElementById('reason');
+    const horas = ["PRIMERA", "SEGUNDA", "TERCERA", "CUARTA", "QUINTA", "SEXTA"];
 
-    // ⬇️ Evitar fechas pasadas
-    const hoy = new Date().toISOString().split('T')[0];
-    fechaInput.min = hoy;
+    // Establecer la fecha mínima como hoy
+    const hoy = new Date();
+    fechaInput.min = hoy.toISOString().split('T')[0];
 
-    // Mostrar mensaje de éxito al enviar
-    form.addEventListener('submit', function (e) {
-        e.preventDefault(); // Previene el envío real
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-        // Muestra el mensaje
-        successMessage.style.display = 'block';
+        // Validar que la hora fin no sea anterior a la hora inicio
+        if (horas.indexOf(horaInicio.value) > horas.indexOf(horaFin.value)) {
+            alert('La hora de fin no puede ser anterior a la de inicio');
+            return;
+        }
 
-        // Oculta el mensaje después de 3 segundos
-        setTimeout(() => {
-            successMessage.style.display = 'none';
-        }, 3000);
+        const idProfesor = obtenerIdProfesor(); // Debes implementar según tu sistema
 
-        // Reinicia el formulario
-        form.reset();
+        const ausencia = {
+            fecha: fechaInput.value,
+            horaInicio: horaInicio.value,
+            horaFin: horaFin.value,
+            motivo: motivo.value,
+            estado: "PENDIENTE_DE_GUARDIA",
+            tareaAlumnado: comentarioTareas.value,
+            idProfesor: {
+                idProfesor: idProfesor
+            },
+            idZona: {
+                idZona: 1 // Ajusta según corresponda
+            }
+        };
 
-        // Restablece el mínimo de nuevo después del reset
-        fechaInput.min = hoy;
+        try {
+            const response = await fetch("http://localhost:8080/ausencias", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(ausencia)
+            });
+
+            if (response.ok) {
+                successMessage.style.display = 'block';
+                form.reset();
+
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                    window.location.href = '../HTML/index-ausencia-guardia.html';
+                }, 3000);
+            } else {
+                const errorData = await response.json();
+                alert(`Error al registrar la ausencia: ${errorData.message || response.statusText}`);
+                console.error('Error detallado:', errorData);
+            }
+        } catch (error) {
+            alert("No se pudo conectar con el servidor");
+            console.error('Error de conexión:', error);
+        }
     });
 
-    // Control de franjas horarias
-    function actualizarFranjasFin() {
-        const inicioSeleccionado = franjaInicio.value;
+    function actualizarHorasFin() {
+        const inicioSeleccionado = horaInicio.value;
 
-        // Habilita todas las opciones primero
-        Array.from(franjaFin.options).forEach(option => {
+        Array.from(horaFin.options).forEach(option => {
             option.disabled = false;
         });
 
         if (inicioSeleccionado) {
-            const indexInicio = franjas.indexOf(inicioSeleccionado);
+            const indexInicio = horas.indexOf(inicioSeleccionado);
 
-            Array.from(franjaFin.options).forEach(option => {
-                if (option.value && franjas.indexOf(option.value) < indexInicio) {
+            Array.from(horaFin.options).forEach(option => {
+                if (option.value && horas.indexOf(option.value) < indexInicio) {
                     option.disabled = true;
                 }
             });
 
-            if (franjaFin.value && franjas.indexOf(franjaFin.value) < indexInicio) {
-                franjaFin.value = '';
+            if (horaFin.value && horas.indexOf(horaFin.value) < indexInicio) {
+                horaFin.value = '';
             }
         }
     }
 
-    franjaInicio.addEventListener('change', actualizarFranjasFin);
+    horaInicio.addEventListener('change', actualizarHorasFin);
+
+    // Obtener ID profesor (ejemplo)
+    function obtenerIdProfesor() {
+        return localStorage.getItem('idProfesor') || 1;
+    }
 });

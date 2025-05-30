@@ -1,69 +1,210 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const franjas = ["PRIMERA", "SEGUNDA", "TERCERA", "CUARTA", "QUINTA", "SEXTA"];
+    const horas = ["PRIMERA", "SEGUNDA", "TERCERA", "CUARTA", "QUINTA", "SEXTA"];
 
-    // ------------------------- FORMULARIO PRINCIPAL -------------------------
     const form = document.querySelector('.filter-form');
     const successMessage = document.getElementById('success-message');
-    const franjaInicio = document.querySelector('.filter-form select[name="franjaInicio"]');
-    const franjaFin = document.querySelector('.filter-form select[name="franjaFin"]');
+    const horaInicio = document.querySelector('.filter-form select[name="horaInicio"]');
+    const horaFin = document.querySelector('.filter-form select[name="horaFin"]');
     const fechaInput = document.querySelector('.filter-form input[name="fecha"]');
+    const absenceList = document.getElementById("absence-list");
 
     const hoy = new Date().toISOString().split('T')[0];
     fechaInput.min = hoy;
 
+    function actualizarHorasFin(selectInicio, selectFin) {
+        const inicioSeleccionado = selectInicio.value;
+
+        Array.from(selectFin.options).forEach(option => option.disabled = false);
+
+        if (inicioSeleccionado) {
+            const indexInicio = horas.indexOf(inicioSeleccionado);
+            Array.from(selectFin.options).forEach(option => {
+                if (option.value && horas.indexOf(option.value) < indexInicio) {
+                    option.disabled = true;
+                }
+            });
+
+            if (selectFin.value && horas.indexOf(selectFin.value) < indexInicio) {
+                selectFin.value = '';
+            }
+        }
+    }
+
+    function deshabilitarHoraFin(selectFin) {
+        Array.from(selectFin.options).forEach(option => {
+            if (option.value) {
+                option.disabled = true;
+            }
+        });
+    }
+
+    async function cargarAusencias(filtros = {}) {
+        absenceList.innerHTML = "<li>Cargando ausencias...</li>";
+
+        try {
+            const response = await fetch("http://localhost:8080/ausencias/consultar");
+
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+            let ausencias = await response.json();
+
+            ausencias = ausencias.filter(ausencia => {
+                const fechaFiltro = filtros.fecha || null;
+                const horaInicioFiltro = filtros.horaInicio || null;
+                const horaFinFiltro = filtros.horaFin || null;
+
+                if (fechaFiltro && ausencia.fecha !== fechaFiltro) return false;
+
+                const idxAusenciaInicio = horas.indexOf(ausencia.horaInicio);
+                const idxAusenciaFin = horas.indexOf(ausencia.horaFin);
+                const idxFiltroInicio = horas.indexOf(horaInicioFiltro);
+                const idxFiltroFin = horas.indexOf(horaFinFiltro);
+
+                if (horaInicioFiltro && idxAusenciaInicio < idxFiltroInicio) return false;
+                if (horaFinFiltro && idxAusenciaFin > idxFiltroFin) return false;
+
+                return true;
+            });
+
+            absenceList.innerHTML = "";
+
+            if (!ausencias || ausencias.length === 0) {
+                absenceList.innerHTML = "<li>No hay ausencias disponibles con los filtros seleccionados.</li>";
+                return;
+            }
+
+            ausencias.forEach((ausencia, index) => {
+                const li = document.createElement("li");
+                const radioId = `ausencia-${index}`;
+                li.innerHTML = `
+                <label for="${radioId}">
+                    <input type="radio" name="ausenciaSeleccionada" value="${index}" id="${radioId}">
+                    Nombre: ${ausencia.nombreProfesor} | Fecha: ${ausencia.fecha} | De ${ausencia.horaInicio} a ${ausencia.horaFin} | Motivo: ${ausencia.motivo}
+                </label>
+            `;
+                absenceList.appendChild(li);
+            });
+
+            window.ausenciasActuales = ausencias;
+
+        } catch (error) {
+            console.error("Error al cargar ausencias:", error);
+            absenceList.innerHTML = "<li>Error cargando las ausencias</li>";
+        }
+    }
+
     form.addEventListener('submit', function (e) {
         e.preventDefault();
-        successMessage.style.display = 'block';
-        setTimeout(() => {
-            successMessage.style.display = 'none';
-        }, 3000);
-        form.reset();
-        fechaInput.min = hoy;
-        deshabilitarFranjaFin(franjaFin);
+
+        const fecha = fechaInput.value.trim();
+        const inicio = horaInicio.value;
+        const fin = horaFin.value;
+
+        const startIndex = horas.indexOf(inicio);
+        const endIndex = horas.indexOf(fin);
+
+        if (inicio && fin && startIndex > endIndex) {
+            alert("La hora de inicio no puede ser posterior a la de fin.");
+            return;
+        }
+
+        const filtros = {};
+        if (fecha) filtros.fecha = fecha;
+        if (inicio) filtros.horaInicio = inicio;
+        if (fin) filtros.horaFin = fin;
+
+        cargarAusencias(filtros);
     });
 
-    franjaInicio.addEventListener('change', function () {
-        actualizarFranjasFin(franjaInicio, franjaFin);
-    });
+    horaInicio.addEventListener('change', () => actualizarHorasFin(horaInicio, horaFin));
+    deshabilitarHoraFin(horaFin);
 
-    deshabilitarFranjaFin(franjaFin); // Inicia deshabilitado
-
-    // ------------------------- MODAL -------------------------
-    const openModalBtn = document.getElementById('open-confirm-modal');
+    // Modal elements
+    const openModalBtn = document.getElementById('abrirModalBtn');
     const modal = document.getElementById('confirmation-modal');
     const cancelModalBtn = document.getElementById('cancel-modal');
     const confirmModalBtn = document.getElementById('confirm-modal');
-
-    const modalFranjaInicio = modal.querySelector('select[name="franjaInicio"]');
-    const modalFranjaFin = modal.querySelector('select[name="franjaFin"]');
+    const modalHoraInicio = modal.querySelector('select[name="horaInicio"]');
+    const modalHoraFin = modal.querySelector('select[name="horaFin"]');
     const profesorInput = modal.querySelector('input[name="profesor"]');
 
     openModalBtn.addEventListener('click', () => {
+        const selectedAusencia = document.querySelector('input[name="ausenciaSeleccionada"]:checked');
+
+        if (!selectedAusencia) {
+            alert("Debe seleccionar una ausencia antes de continuar.");
+            return;
+        }
+
         modal.style.display = 'flex';
-        deshabilitarFranjaFin(modalFranjaFin);
+        deshabilitarHoraFin(modalHoraFin);
+        cargarProfesores();
     });
 
     cancelModalBtn.addEventListener('click', () => {
         modal.style.display = 'none';
-        modal.querySelector('form')?.reset?.();
+        profesorInput.value = '';
+        modalHoraInicio.value = '';
+        modalHoraFin.value = '';
+        deshabilitarHoraFin(modalHoraFin);
     });
 
-    confirmModalBtn.addEventListener('click', () => {
-        if (!profesorInput.value.trim()) {
-            alert("Por favor, indique el nombre del profesor.");
+    confirmModalBtn.addEventListener('click', async () => {
+        const profesorId = document.getElementById("modalProfesor").value;
+        const horaInicioVal = modalHoraInicio.value;
+        const horaFinVal = modalHoraFin.value;
+
+        const selectedAusenciaRadio = document.querySelector('input[name="ausenciaSeleccionada"]:checked');
+
+        if (!profesorId) {
+            alert("Por favor, seleccione un profesor.");
             return;
         }
 
-        if (!modalFranjaInicio.value || !modalFranjaFin.value) {
+        if (!horaInicioVal || !horaFinVal) {
             alert("Debe seleccionar hora de inicio y fin.");
             return;
         }
 
-        modal.style.display = 'none';
-        successMessage.style.display = 'block';
-        setTimeout(() => {
-            successMessage.style.display = 'none';
-        }, 3000);
+        if (!selectedAusenciaRadio) {
+            alert("Debe seleccionar una ausencia.");
+            return;
+        }
+
+        const ausenciaSeleccionada = window.ausenciasActuales[parseInt(selectedAusenciaRadio.value)];
+
+        const payload = {
+            idProfesor: parseInt(profesorId),
+            idAusencia: ausenciaSeleccionada.idAusencia,
+            horaInicio: horaInicioVal,
+            horaFin: horaFinVal
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/guardias/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            modal.style.display = 'none';
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+
+            cargarAusencias();
+
+        } catch (error) {
+            console.error("Error al registrar la guardia:", error);
+            alert("Ocurrió un error al registrar la guardia.");
+        }
     });
 
     window.addEventListener('click', (event) => {
@@ -72,38 +213,53 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    modalFranjaInicio.addEventListener('change', function () {
-        actualizarFranjasFin(modalFranjaInicio, modalFranjaFin);
-    });
+    modalHoraInicio.addEventListener('change', () => actualizarHorasFin(modalHoraInicio, modalHoraFin));
 
-    // ------------------------- FUNCIONES AUXILIARES -------------------------
-    function actualizarFranjasFin(selectInicio, selectFin) {
-        const inicioSeleccionado = selectInicio.value;
+    cargarAusencias();
 
-        Array.from(selectFin.options).forEach(option => {
-            option.disabled = false;
-        });
+    async function cargarProfesores() {
+        const selectProfesor = document.getElementById("modalProfesor");
+        selectProfesor.innerHTML = '<option value="">Cargando profesores...</option>';
 
-        if (inicioSeleccionado) {
-            const indexInicio = franjas.indexOf(inicioSeleccionado);
+        try {
+            const response = await fetch("http://localhost:8080/usuarios/profesores");
 
-            Array.from(selectFin.options).forEach(option => {
-                if (option.value && franjas.indexOf(option.value) < indexInicio) {
-                    option.disabled = true;
-                }
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            const profesores = await response.json();
+
+            const selectedAusenciaRadio = document.querySelector('input[name="ausenciaSeleccionada"]:checked');
+            let profesorAusente = null;
+
+            if (selectedAusenciaRadio) {
+                const ausenciaSeleccionada = window.ausenciasActuales[parseInt(selectedAusenciaRadio.value)];
+                profesorAusente = ausenciaSeleccionada?.idProfesor;
+            }
+
+            const profesoresFiltrados = profesores.filter(prof => prof.idUsuario !== profesorAusente);
+
+            if (!profesoresFiltrados || profesoresFiltrados.length === 0) {
+                selectProfesor.innerHTML = '<option value="">No hay profesores disponibles</option>';
+                return;
+            }
+
+            selectProfesor.innerHTML = '<option value="">Seleccione un profesor</option>';
+            profesoresFiltrados.forEach(profesor => {
+                const option = document.createElement("option");
+                option.value = profesor.idUsuario;
+                option.textContent = profesor.nombre + ' ' + profesor.apellidos;
+                selectProfesor.appendChild(option);
             });
 
-            if (selectFin.value && franjas.indexOf(selectFin.value) < indexInicio) {
-                selectFin.value = '';
-            }
+        } catch (error) {
+            selectProfesor.innerHTML = '<option value="">Error al cargar</option>';
+            console.error("Error cargando profesores:", error);
         }
     }
 
-    function deshabilitarFranjaFin(selectFin) {
-        Array.from(selectFin.options).forEach(option => {
-            if (option.value) {
-                option.disabled = true;
-            }
-        });
-    }
+    document.getElementById('cancel-modal').addEventListener('click', () => {
+        document.getElementById('confirmation-modal').style.display = 'none';
+    });
 });

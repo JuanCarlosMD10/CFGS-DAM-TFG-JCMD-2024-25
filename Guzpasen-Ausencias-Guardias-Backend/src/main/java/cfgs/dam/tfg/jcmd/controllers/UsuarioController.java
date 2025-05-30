@@ -2,37 +2,46 @@ package cfgs.dam.tfg.jcmd.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cfgs.dam.tfg.jcmd.models.UsuarioModelo;
+import cfgs.dam.tfg.jcmd.dto.UsuarioDTO;
+import cfgs.dam.tfg.jcmd.models.UsuarioModelo.Rol;
 import cfgs.dam.tfg.jcmd.services.UsuarioService;
+import lombok.RequiredArgsConstructor;
 
+/**
+ * Controlador REST para la gestión de usuarios. Permite crear nuevos usuarios y
+ * consultar la lista de profesores registrados.
+ */
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 
-	@Autowired
-	private UsuarioService usuarioService;
+	private final UsuarioService usuarioService;
 
-	@GetMapping
-	public List<UsuarioModelo> getAllUsuarios() {
-		return usuarioService.findAll();
-	}
-
-	@GetMapping("/{id}")
-	public ResponseEntity<UsuarioModelo> getUsuarioById(@PathVariable Long id) {
-		return ResponseEntity.ok(usuarioService.findById(id));
-	}
-
+	/**
+	 * Crea un nuevo usuario en el sistema.
+	 *
+	 * @param usuarioDTO Objeto con los datos del usuario a crear.
+	 * @return UsuarioDTO con la información del usuario creado.
+	 */
 	@PostMapping
-	public ResponseEntity<UsuarioModelo> createUsuario(@RequestBody UsuarioModelo usuario) {
-		return ResponseEntity.ok(usuarioService.createUsuario(usuario));
+	public UsuarioDTO crearUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+		return usuarioService.createUsuario(usuarioDTO);
+	}
+
+	/**
+	 * Obtiene una lista de todos los usuarios con rol de profesor.
+	 *
+	 * @return Lista de UsuarioDTO correspondientes a profesores.
+	 */
+	@GetMapping("/profesores")
+	public List<UsuarioDTO> obtenerProfesores() {
+		return usuarioService.findByRol(Rol.PROFESOR);
 	}
 }

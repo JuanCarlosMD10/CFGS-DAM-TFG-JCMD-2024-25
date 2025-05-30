@@ -7,46 +7,27 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import cfgs.dam.tfg.jcmd.models.GuardiaModelo;
-import cfgs.dam.tfg.jcmd.models.UsuarioModelo;
 
 /**
- * Interfaz que actúa como repositorio para las guardias. Extiende JpaRepository
- * para proporcionar operaciones CRUD sobre la entidad GuardiaModelo.
- * 
- * Esta interfaz incluye métodos para obtener las guardias según diferentes
- * criterios, como la fecha o el profesor asignado.
+ * Repositorio para gestionar las operaciones CRUD sobre la entidad
+ * GuardiaModelo. Extiende JpaRepository para facilitar la interacción con la
+ * base de datos.
  */
 @Repository
 public interface GuardiaRepository extends JpaRepository<GuardiaModelo, Long> {
 
 	/**
-	 * Obtiene todas las guardias registradas en el sistema.
-	 * 
-	 * @return una lista con todas las guardias.
-	 */
-	List<GuardiaModelo> findAll();
-
-	/**
-	 * Encuentra todas las guardias correspondientes a una fecha específica.
-	 * 
-	 * @param fecha la fecha de las guardias.
-	 * @return una lista de guardias para la fecha proporcionada.
+	 * Busca las guardias asignadas en una fecha específica.
+	 *
+	 * @param fecha Fecha para filtrar las guardias.
+	 * @return Lista de guardias asignadas en la fecha indicada.
 	 */
 	List<GuardiaModelo> findByFecha(LocalDate fecha);
 
 	/**
-	 * Encuentra todas las guardias asociadas a un profesor.
-	 * 
-	 * @param profesor el profesor cuyas guardias se desean obtener.
-	 * @return una lista de guardias asociadas al profesor dado.
+	 * Recupera todas las guardias registradas.
+	 *
+	 * @return Lista completa de todas las guardias.
 	 */
-	List<GuardiaModelo> findByIdProfesor(UsuarioModelo profesor);
-
-	/**
-	 * Encuentra una guardia por su identificador único.
-	 * 
-	 * @param idGuardia el identificador único de la guardia.
-	 * @return la guardia correspondiente al identificador, o null si no existe.
-	 */
-	GuardiaModelo findGuardiaModeloByIdGuardia(Long idGuardia);
+	List<GuardiaModelo> findAll();
 }

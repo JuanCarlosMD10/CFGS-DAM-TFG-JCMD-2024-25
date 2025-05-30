@@ -1,29 +1,116 @@
-// Obtener los elementos
-const confirmButton = document.querySelector('.confirm-btn');
-const modal = document.getElementById('confirmation-modal');
-const cancelButton = document.getElementById('cancel-btn-modal');
-const confirmModalButton = document.getElementById('confirm-btn-modal');
-const successMessage = document.getElementById('success-message');
+document.addEventListener("DOMContentLoaded", () => {
+    cargarAusencias();
 
-// Mostrar el modal al hacer clic en el botón confirmar
-confirmButton.addEventListener('click', function () {
-    modal.style.display = 'flex';  // Muestra el modal
+    const eliminarBtn = document.querySelector(".confirm-btn"); // botón ELIMINAR (fuera modal)
+    const modal = document.getElementById("confirmation-modal");
+    const modalConfirmBtn = document.getElementById("confirm-btn-modal");
+    const modalCancelBtn = document.getElementById("cancel-btn-modal");
+
+    eliminarBtn.addEventListener("click", () => {
+        const selectedRadio = document.querySelector('input[name="ausencia"]:checked');
+        if (!selectedRadio) {
+            alert("Por favor, selecciona una ausencia para eliminar.");
+            return;
+        }
+        // Mostrar modal
+        modal.style.display = "flex";
+    });
+
+    modalCancelBtn.addEventListener("click", () => {
+        // Ocultar modal sin hacer nada
+        modal.style.display = "none";
+    });
+
+    modalConfirmBtn.addEventListener("click", async () => {
+        const selectedRadio = document.querySelector('input[name="ausencia"]:checked');
+        if (!selectedRadio) {
+            alert("Por favor, selecciona una ausencia para eliminar.");
+            modal.style.display = "none";
+            return;
+        }
+
+        const ausenciaId = selectedRadio.value;
+
+        try {
+            const response = await fetch(`http://localhost:8080/ausencias/${ausenciaId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+            // Ocultar modal y mostrar mensaje éxito
+            modal.style.display = "none";
+            mostrarMensajeExito();
+
+            // Refrescar lista después de un pequeño delay para ver mensaje
+            setTimeout(() => {
+                ocultarMensajeExito();
+                cargarAusencias();
+            }, 1500);
+
+        } catch (error) {
+            console.error("Error al eliminar la ausencia:", error);
+            alert("No se pudo eliminar la ausencia. Inténtalo de nuevo.");
+            modal.style.display = "none";
+        }
+    });
+
+    document.getElementById("absence-list").addEventListener("change", () => {
+        const selected = document.querySelector('input[name="ausencia"]:checked');
+        eliminarBtn.disabled = !selected;
+    });
+
+    // Inicialmente botón ELIMINAR deshabilitado
+    eliminarBtn.disabled = true;
 });
 
-// Cerrar el modal sin hacer cambios al hacer clic en cancelar
-cancelButton.addEventListener('click', function () {
-    modal.style.display = 'none';  // Oculta el modal
-});
+function mostrarMensajeExito() {
+    const mensaje = document.getElementById("success-message");
+    mensaje.style.display = "block";
+}
 
-// Confirmar la acción al hacer clic en confirmar
-confirmModalButton.addEventListener('click', function () {
-    modal.style.display = 'none';  // Ocultar el modal
+function ocultarMensajeExito() {
+    const mensaje = document.getElementById("success-message");
+    mensaje.style.display = "none";
+}
 
-    // Mostrar el mensaje de éxito
-    successMessage.style.display = 'block';
+async function cargarAusencias() {
+    const absenceList = document.getElementById("absence-list");
+    absenceList.innerHTML = "<li>Cargando ausencias...</li>";
 
-    // Opcionalmente, ocultar el mensaje después de unos segundos
-    setTimeout(function () {
-        successMessage.style.display = 'none';
-    }, 3000); // El mensaje se oculta después de 3 segundos
-});
+    try {
+        const response = await fetch('http://localhost:8080/ausencias/profesor/1');
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+        const ausencias = await response.json();
+
+        absenceList.innerHTML = "";
+
+        if (ausencias.length === 0) {
+            absenceList.innerHTML = "<li>No hay ausencias registradas.</li>";
+            return;
+        }
+
+        ausencias.forEach(ausencia => {
+            const li = document.createElement("li");
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "ausencia";
+            radio.value = ausencia.idAusencia || ausencia.id || "";
+
+            const texto = ` Fecha: ${ausencia.fecha || "sin fecha"} | Motivo: ${ausencia.motivo || "sin motivo"}`;
+
+            const label = document.createElement("label");
+            label.appendChild(radio);
+            label.append(texto);
+
+            li.appendChild(label);
+            absenceList.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error("Error al cargar ausencias:", error);
+        absenceList.innerHTML = "<li>Error cargando las ausencias</li>";
+    }
+}

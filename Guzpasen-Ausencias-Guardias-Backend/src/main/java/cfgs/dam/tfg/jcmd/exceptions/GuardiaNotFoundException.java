@@ -1,18 +1,17 @@
 package cfgs.dam.tfg.jcmd.exceptions;
 
 /**
- * Excepción que se lanza cuando no se encuentra una guardia en el sistema.
- * Extiende de RuntimeException y proporciona un mensaje de error específico
- * para el problema ocurrido.
+ * Excepción personalizada para manejar el caso en el que no se encuentra una
+ * guardia.
  */
 public class GuardiaNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = -6208669239407121655L;
 
 	/**
-	 * Constructor de la excepción que recibe un mensaje detallado.
-	 *
-	 * @param message El mensaje que describe el motivo de la excepción.
+	 * Constructor que crea una excepción con el mensaje proporcionado.
+	 * 
+	 * @param message El mensaje de error.
 	 */
 	public GuardiaNotFoundException(String message) {
 		super(message);

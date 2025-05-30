@@ -58,7 +58,7 @@ body {
 
 .home {
     font-size: 1.2rem;
-    background: rgba(146, 146, 146, 0.84);
+    background: #D9D9D9;
     border: none;
     border-radius: 0.5rem;
     padding: 0.8rem 1.5rem;
@@ -79,13 +79,14 @@ body {
 
 .back-button {
     font-size: 2.2rem;
-    background: rgba(146, 146, 146, 0.84);
+    background: #D9D9D9;
     border: none;
     border-radius: 0.5rem;
     padding: 0.2rem 1.5rem;
     cursor: pointer;
     margin-right: 2rem;
     transition: transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .back-button:hover {
@@ -209,7 +210,7 @@ body {
 }
 
 .cancel-btn {
-    background-color: #f1c40f;
+    background-color: #FFC107;
     color: black;
 }
 
@@ -218,7 +219,7 @@ body {
 }
 
 .confirm-btn {
-    background-color: #27ae60;
+    background-color: #28A745;
     color: white;
 }
 
