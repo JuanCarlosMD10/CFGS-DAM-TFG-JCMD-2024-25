@@ -30,7 +30,6 @@ body {
     position: relative;
 }
 
-/* HEADER */
 .header {
     display: flex;
     align-items: center;
@@ -122,7 +121,6 @@ body {
     transition: all 0.3s ease;
 }
 
-/* CONTENIDO */
 .filter-container {
     flex: 1;
     padding: 2rem 4vw;
@@ -132,7 +130,6 @@ body {
     align-items: center;
 }
 
-/* FORMULARIO DE FILTRO */
 .filter-form {
     background: rgba(255, 255, 255, 0.9);
     padding: 1.5rem 2rem;
@@ -184,7 +181,6 @@ body {
     background-color: #1f6391;
 }
 
-/* BOTÓN DE EXPORTAR */
 .export-button {
     margin-top: 1rem;
     background-color: #28A745;
@@ -202,7 +198,6 @@ body {
     background-color: #1e8449;
 }
 
-/* LISTA DE AUSENCIAS */
 .absence-list-container {
     width: 100%;
     max-width: 1000px;
@@ -241,7 +236,6 @@ body {
     transform: scale(1.2);
 }
 
-/* MODAL DE CONFIRMACIÓN */
 .modal {
     display: none;
     position: fixed;
@@ -313,7 +307,6 @@ body {
     background-color: #219150;
 }
 
-/* MENSAJE DE ÉXITO */
 .success-message {
     display: none;
     font-size: 1.2rem;
@@ -327,7 +320,6 @@ body {
     width: 100%;
     max-width: 600px;
     margin: 2rem auto;
-    /* Espaciado vertical */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -358,7 +350,6 @@ body {
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* RESPONSIVO */
 @media (max-width: 600px) {
     .filter-form {
         flex-direction: column;

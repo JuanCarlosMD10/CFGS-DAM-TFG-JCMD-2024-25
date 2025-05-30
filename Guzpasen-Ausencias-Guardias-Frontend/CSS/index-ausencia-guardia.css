@@ -33,7 +33,6 @@ body {
     position: relative;
 }
 
-/* HEADER */
 .header {
     display: flex;
     align-items: center;
@@ -130,7 +129,6 @@ body {
     transition: all 0.3s ease;
 }
 
-/* CONTENIDO PRINCIPAL */
 .content {
     margin: 10vh auto 0;
     padding: 3vh 5vw 6vh;
@@ -185,22 +183,17 @@ body {
 .note {
     position: absolute;
     top: calc(100% + 0.5rem);
-    /* Reducido de 1rem a 0.5rem para pegar más */
     left: 50%;
     transform: translateX(-50%) translateY(-5px);
-    /* Reducido el translateY */
     background: rgb(202, 188, 110);
     color: #333;
     padding: 1.2rem;
-    /* Reducido el padding */
     border-radius: 0.8rem;
     font-size: 1.1rem;
     width: 110%;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    /* Sombra más suave */
     opacity: 0;
     transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-    /* Transición más rápida */
     pointer-events: none;
     z-index: 100;
     text-align: center;
@@ -209,7 +202,6 @@ body {
 
 .option:hover {
     transform: translateY(-3px) scale(1.02);
-    /* Efecto de hover más sutil */
     background: #06188D;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
@@ -224,7 +216,6 @@ body {
     grid-row: 3;
 }
 
-/* RESPONSIVE DESIGN */
 @media (max-width: 1400px) {
     .content {
         gap: 4.5rem 3.5rem;
@@ -255,7 +246,6 @@ body {
 
     .note {
         top: calc(100% + 0.4rem);
-        /* Ajuste para responsive */
     }
 }
 
@@ -340,9 +330,7 @@ body {
     }
 
     .note {
-        width: 110%;
-        padding: 1rem;
+        width: 130%;
         font-size: 1rem;
-        top: calc(100% + 0.2rem);
     }
 }
