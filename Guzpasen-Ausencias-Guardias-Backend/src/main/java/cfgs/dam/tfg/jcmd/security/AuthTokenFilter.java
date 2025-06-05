@@ -10,7 +10,6 @@
 //import org.springframework.stereotype.Component;
 //import org.springframework.web.filter.OncePerRequestFilter;
 //
-//import cfgs.dam.tfg.jcmd.services.UsuarioService;
 //import cfgs.dam.tfg.jcmd.utils.JwtUtil;
 //import jakarta.servlet.FilterChain;
 //import jakarta.servlet.ServletException;
@@ -24,13 +23,13 @@
 //	private JwtUtil jwtUtils;
 //
 //	@Autowired
-//	private UsuarioService usuarioService;
+//	private CustomerDetailService customerDetailService;
 //
 //	private String parseJwt(HttpServletRequest request) {
 //		String resultado = null;
 //		String headerAuth = request.getHeader("Authorization");
-//		if (headerAuth != null && headerAuth.startsWith("Bearer")) {
-//			resultado = headerAuth.substring(6);
+//		if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
+//			resultado = headerAuth.substring(7); // ✅ Quita "Bearer " (con espacio)
 //		}
 //		return resultado;
 //	}
@@ -42,7 +41,7 @@
 //			String jwt = parseJwt(request);
 //			if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
 //				String username = jwtUtils.getUsernameFromToken(jwt);
-//				UserDetails userDetails = usuarioService.loadUserByUsername(username);
+//				UserDetails userDetails = customerDetailService.loadUserByUsername(username);
 //				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 //						userDetails, null, userDetails.getAuthorities());
 //				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

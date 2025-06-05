@@ -24,6 +24,9 @@ public class UsuarioDTO {
 
 	/** Correo electrónico del usuario */
 	private String email;
+	
+	/** Contraseña cifrada del usuario */
+	private String clave;
 
 	/** Rol del usuario */
 	private Rol rol;

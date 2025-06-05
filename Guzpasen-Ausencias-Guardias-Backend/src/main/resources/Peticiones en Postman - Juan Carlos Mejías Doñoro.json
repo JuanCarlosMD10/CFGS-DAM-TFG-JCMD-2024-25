@@ -1,0 +1,238 @@
+{
+	"info": {
+		"_postman_id": "63001dfe-01eb-489a-8cfe-f0d8693aa5a7",
+		"name": "GUZPASEN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44819929",
+		"_collection_link": "https://juancarlosmd10-9464069.postman.co/workspace/JuanCarlosMD10's-Workspace~979b13f0-d23c-42e4-8a7f-360e8549dc16/collection/44819929-63001dfe-01eb-489a-8cfe-f0d8693aa5a7?action=share&source=collection_link&creator=44819929"
+	},
+	"item": [
+		{
+			"name": "AUSENCIAS",
+			"item": [
+				{
+					"name": "Registrar ausencia",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado\": \"PENDIENTE_DE_GUARDIA\",\r\n    \"fecha\": \"2025-04-27\",\r\n    \"horaInicio\": \"PRIMERA\",\r\n    \"horaFin\": \"SEGUNDA\",\r\n    \"motivo\": \"Cita médica\",\r\n    \"tareaAlumnado\": \"Ejercicio 1 y 2 de la página 20\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/ausencias/registrar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ausencias",
+								"registrar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar ausencia",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ausencias/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ausencias",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar ausencia",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado\": \"PENDIENTE_DE_GUARDIA\",\r\n    \"fecha\": \"2025-04-27\",\r\n    \"horaInicio\": \"TERCERA\",\r\n    \"horaFin\": \"TERCERA\",\r\n    \"motivo\": \"Modificación de ausencia\",\r\n    \"tareaAlumnado\": \"Tarea modificada\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/ausencias/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ausencias",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar ausencia",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ausencias/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ausencias",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar todas las ausencias",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ausencias/consultar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ausencias",
+								"consultar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar todas las ausencias de un profesor",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/ausencias/profesor/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"ausencias",
+								"profesor",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GUARDIAS",
+			"item": [
+				{
+					"name": "Registrar guardia",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fecha\": \"2025-05-15\",\r\n  \"horaInicio\": \"PRIMERA\",\r\n  \"horaFin\": \"SEGUNDA\",\r\n  \"idProfesor\": 1,\r\n  \"idAula\": 2,\r\n  \"idAusencia\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/guardias/registrar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"guardias",
+								"registrar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar guardia",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/guardias/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"guardias",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consultar todas las guardias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/guardias/consultar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"guardias",
+								"consultar"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

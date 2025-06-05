@@ -49,18 +49,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let ausencias = await response.json();
 
-            // Filtrado frontend de las ausencias según los filtros recibidos
+            // Filtrado frontend: solo mostrar ausencias que coincidan exactamente con la fecha seleccionada
             ausencias = ausencias.filter(ausencia => {
-                const fechaInicioFiltro = filtros.fechaInicio || null;
-                const fechaFinFiltro = filtros.fechaFin || null;
+                const fechaFiltro = filtros.fechaInicio || null;
                 const horaInicioFiltro = filtros.horaInicio || null;
                 const horaFinFiltro = filtros.horaFin || null;
 
-                // Filtrar por rango de fechas
-                if (fechaInicioFiltro && ausencia.fecha < fechaInicioFiltro) return false;
-                if (fechaFinFiltro && ausencia.fecha > fechaFinFiltro) return false;
+                // Filtrar por fecha exacta
+                if (fechaFiltro && ausencia.fecha !== fechaFiltro) return false;
 
-                // Filtrar por rango de horas
+                // Filtrar por rango de horas si se seleccionaron
                 const idxAusenciaInicio = horas.indexOf(ausencia.horaInicio);
                 const idxAusenciaFin = horas.indexOf(ausencia.horaFin);
                 const idxFiltroInicio = horas.indexOf(horaInicioFiltro);
@@ -69,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (horaInicioFiltro && idxAusenciaInicio < idxFiltroInicio) return false;
                 if (horaFinFiltro && idxAusenciaFin > idxFiltroFin) return false;
 
-                return true; // Si pasa todos los filtros, se mantiene
+                return true;
             });
 
             absenceList.innerHTML = ""; // Limpiar la lista antes de mostrar resultados

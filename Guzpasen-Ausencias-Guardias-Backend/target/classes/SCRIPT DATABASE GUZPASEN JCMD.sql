@@ -1,7 +1,7 @@
 -- Crear usuario
 CREATE USER 'juancarlos'@'localhost' IDENTIFIED BY 'juancarlos';
 -- Dar privilegios específicos
-GRANT ALL PRIVILEGES ON proyectotransversaljcmd.* TO 'juancarlos'@'localhost';
+GRANT ALL PRIVILEGES ON guzpasen.* TO 'juancarlos'@'localhost';
 -- Verificar los privilegios
 SHOW GRANTS FOR 'juancarlos'@'localhost';
 

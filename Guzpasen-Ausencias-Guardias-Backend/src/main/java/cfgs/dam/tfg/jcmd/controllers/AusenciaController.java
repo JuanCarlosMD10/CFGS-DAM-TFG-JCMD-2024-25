@@ -39,11 +39,16 @@ public class AusenciaController {
      * @param ausencia Datos de la ausencia a registrar.
      * @return Objeto AusenciaDTO con la información registrada.
      */
-    @PostMapping
+    @PostMapping("/registrar")
     public AusenciaDTO registrarAusencia(@RequestBody AusenciaModelo ausencia) {
         UsuarioModelo profesorExistente = new UsuarioModelo();
-        profesorExistente.setIdUsuario(1L);
+        profesorExistente.setIdUsuario(1L); // simula como que está logueado el usuario con id 1 por falta de login
         ausencia.setIdProfesor(profesorExistente);
+        return ausenciaService.registrarAusencia(ausencia);
+    }
+    
+    @PostMapping("/profesor/{idProfesor}")
+    public AusenciaDTO registrarAusenciaConCualquierIdDeProfesor(@RequestBody AusenciaModelo ausencia) {
         return ausenciaService.registrarAusencia(ausencia);
     }
 

@@ -3,6 +3,7 @@ package cfgs.dam.tfg.jcmd.services;
 import java.util.List;
 
 import cfgs.dam.tfg.jcmd.dto.UsuarioDTO;
+import cfgs.dam.tfg.jcmd.exceptions.UsuarioNotFoundException;
 import cfgs.dam.tfg.jcmd.models.UsuarioModelo;
 
 /**
@@ -40,4 +41,22 @@ public interface UsuarioService {
 	 * @return Lista de UsuarioDTO con el rol especificado.
 	 */
 	List<UsuarioDTO> findByRol(UsuarioModelo.Rol rol);
+	
+	/**
+	 * Busca un usuario por nombre y apellidos, generando el "nombre de usuario" dinámico.
+	 * 
+	 * @param username Nombre de usuario generado.
+	 * @return UsuarioModelo encontrado.
+	 */
+	UsuarioModelo findByGeneratedUsername(String username);
+	
+	/**
+	 * Verifica si existe un usuario con un nombre de usuario generado a partir del nombre y apellidos.
+	 *
+	 * @param username el nombre de usuario generado.
+	 * @return true si existe un usuario con ese nombre de usuario, false en caso contrario.
+	 */
+	boolean existsByGeneratedUsername(String username);
+	
+	UsuarioModelo findByEmail(String email) throws UsuarioNotFoundException;
 }

@@ -1,6 +1,7 @@
 package cfgs.dam.tfg.jcmd.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ public interface UsuarioRepository extends JpaRepository<UsuarioModelo, Long> {
 	 * @param email Correo electrónico del usuario.
 	 * @return UsuarioModelo que coincide con el correo o null si no existe.
 	 */
-	UsuarioModelo findByEmail(String email);
+	Optional<UsuarioModelo> findByEmail(String email);
 
 	/**
 	 * Comprueba si existe un usuario con el correo electrónico dado.

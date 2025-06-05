@@ -1,0 +1,159 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+html {
+    font-size: 16px;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.background {
+    background: url('../IMAGENES/fondo.png') no-repeat center center;
+    background-size: cover;
+    filter: blur(3px);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    background-color: rgba(240, 240, 240, 0.68);
+    padding: 1.8rem 4vw;
+    height: 13vh;
+    min-height: 6rem;
+    gap: 3rem;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.logo {
+    width: 6rem;
+    margin-right: 3rem;
+    flex-shrink: 0;
+}
+
+.logo img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    max-height: 80px;
+}
+
+.title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    white-space: nowrap;
+    letter-spacing: 0.1rem;
+    color: #333;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+}
+
+.login-box {
+    background-color: rgba(240, 240, 240, 0.68);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 350px;
+    margin: auto;
+    margin-top: 180px;
+    color: black;
+    text-align: center;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+}
+
+.user-box {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.user-box input {
+    width: 100%;
+    padding: 10px 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid black;
+    color: black;
+    font-size: 16px;
+}
+
+.user-box label {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    color: black;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.user-box input:focus~label,
+.user-box input:valid~label {
+    top: -20px;
+    font-size: 12px;
+    color: black;
+}
+
+.login-btn {
+    background: #28A745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-btn:hover {
+    background: #219150;
+}
+
+#errorMensaje {
+    display: none;
+    color: red;
+    margin-top: 20px;
+}
+
+@media (max-width: 1024px) {
+    .header {
+        padding: 1.5rem 3vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1.2rem 3vw;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 1rem 4vw;
+    }
+}

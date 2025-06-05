@@ -8,21 +8,23 @@
 //import org.springframework.security.core.userdetails.UsernameNotFoundException;
 //import org.springframework.stereotype.Service;
 //
+//import cfgs.dam.tfg.jcmd.exceptions.UsuarioNotFoundException;
 //import cfgs.dam.tfg.jcmd.models.UsuarioModelo;
-//import cfgs.dam.tfg.jcmd.repositories.UsuarioRepository;
+//import cfgs.dam.tfg.jcmd.services.UsuarioService;
 //
 //@Service
 //public class CustomerDetailService implements UserDetailsService {
 //	@Autowired
-//	private UsuarioRepository repoUsuario;
+//	private UsuarioService usuarioService;
 //
 //	@Override
-//	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//		UsuarioModelo user = repoUsuario.findByUsuario(username);
-//		if (user == null) {
-//			throw new UsernameNotFoundException("User Not Found with username: " + username);
+//	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//		try {
+//			UsuarioModelo usuario = usuarioService.findByEmail(email);
+//			return new org.springframework.security.core.userdetails.User(email, usuario.getClave(),
+//					Collections.emptyList());
+//		} catch (UsuarioNotFoundException e) {
+//			throw new UsernameNotFoundException(e.getMessage());
 //		}
-//		return new org.springframework.security.core.userdetails.User(user.getUsuario(), user.getClave(),
-//				Collections.emptyList());
 //	}
 //}

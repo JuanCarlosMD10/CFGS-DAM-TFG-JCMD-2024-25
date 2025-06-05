@@ -29,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	 */
 	private UsuarioDTO convertirADTO(UsuarioModelo usuario) {
 		return new UsuarioDTO(usuario.getIdUsuario(), usuario.getNombre(), usuario.getApellidos(), usuario.getEmail(),
-				usuario.getRol(), usuario.getUsuarioMovil());
+				usuario.getClave(), usuario.getRol(), usuario.getUsuarioMovil());
 	}
 
 	/**
@@ -44,6 +44,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuario.setNombre(usuarioDTO.getNombre());
 		usuario.setApellidos(usuarioDTO.getApellidos());
 		usuario.setEmail(usuarioDTO.getEmail());
+		usuario.setClave(usuarioDTO.getClave());
 		usuario.setRol(usuarioDTO.getRol());
 		usuario.setUsuarioMovil(usuarioDTO.getUsuarioMovil());
 		return usuario;
@@ -98,5 +99,53 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public List<UsuarioDTO> findByRol(UsuarioModelo.Rol rol) {
 		return usuarioRepository.findByRol(rol).stream().map(this::convertirADTO).collect(Collectors.toList());
+	}
+
+	@Override
+	public UsuarioModelo findByGeneratedUsername(String username) {
+		List<UsuarioModelo> todos = usuarioRepository.findAll();
+
+		for (UsuarioModelo u : todos) {
+			String generado = generarNombreUsuario(u.getNombre(), u.getApellidos());
+			if (generado.equalsIgnoreCase(username)) {
+				return u;
+			}
+		}
+
+		throw new UsuarioNotFoundException("No se encontró un usuario con nombre generado: " + username);
+	}
+
+	private String generarNombreUsuario(String nombre, String apellidos) {
+		if (nombre == null || apellidos == null)
+			return null;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(Character.toLowerCase(nombre.charAt(0)));
+
+		String[] partes = apellidos.trim().split("\\s+");
+		for (String parte : partes) {
+			sb.append(parte.substring(0, Math.min(3, parte.length())).toLowerCase());
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public boolean existsByGeneratedUsername(String username) {
+		List<UsuarioModelo> usuarios = usuarioRepository.findAll();
+
+		for (UsuarioModelo usuario : usuarios) {
+			String nombreGenerado = generarNombreUsuario(usuario.getNombre(), usuario.getApellidos());
+			if (nombreGenerado != null && nombreGenerado.equalsIgnoreCase(username)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public UsuarioModelo findByEmail(String email) throws UsuarioNotFoundException {
+		return usuarioRepository.findByEmail(email)
+				.orElseThrow(() -> new UsuarioNotFoundException("No se encontró usuario con email: " + email));
 	}
 }
