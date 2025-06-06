@@ -33,13 +33,4 @@ public class UsuarioDTO {
 
 	/** Indica si el usuario es un usuario móvil */
 	private Boolean usuarioMovil;
-
-	/**
-	 * Obtiene el nombre completo del usuario concatenando nombre y apellidos.
-	 * 
-	 * @return Nombre completo en formato "nombre apellidos"
-	 */
-	public String getNombreCompleto() {
-		return nombre + " " + apellidos;
-	}
 }

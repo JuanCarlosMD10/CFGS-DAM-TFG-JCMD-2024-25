@@ -1,9 +1,9 @@
 // Espera a que el contenido del DOM esté completamente cargado antes de ejecutar el código
 document.addEventListener("DOMContentLoaded", () => {
-    // Extrae los parámetros de la URL
+    // Extrae los parámetros de la URL (query string)
     const params = new URLSearchParams(window.location.search);
 
-    // Obtiene los valores de los parámetros
+    // Obtiene los valores de los parámetros individuales
     const ausenciaId = params.get("id");
     const fecha = params.get("fecha");
     const motivo = params.get("motivo");
@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const horaFin = params.get("horaFin");
     const comentarioTareas = params.get("comentarioTareas");
 
-    // Define el orden de las horas para validaciones posteriores
+    // Define el orden lógico de las horas para las validaciones (de primera a sexta hora)
     const horas = ["PRIMERA", "SEGUNDA", "TERCERA", "CUARTA", "QUINTA", "SEXTA"];
 
-    // Referencias a los elementos del formulario
+    // Referencias a los elementos del formulario para interactuar con ellos
     const fechaInput = document.getElementById("date");
     const motivoInput = document.getElementById("reason");
     const horaInicioSelect = document.getElementById("horaInicio");
@@ -23,52 +23,53 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".absence-form");
     const successMessage = document.getElementById("success-message");
 
-    // Establece la fecha mínima permitida como la fecha actual
+    // Establece la fecha mínima permitida en el selector de fecha como la fecha actual
     const hoy = new Date();
     fechaInput.min = hoy.toISOString().split('T')[0];
 
-    // Rellena los campos del formulario con los valores extraídos de la URL
+    // Rellena los campos del formulario con los valores extraídos de la URL (si existen)
     if (fecha) fechaInput.value = fecha;
     if (motivo) motivoInput.value = motivo;
     if (horaInicio) horaInicioSelect.value = horaInicio.toUpperCase();
     if (horaFin) horaFinSelect.value = horaFin.toUpperCase();
     if (comentarioTareas) comentarioTareasInput.value = comentarioTareas;
 
-    // Función para actualizar las opciones del selector de hora de fin según la hora de inicio
+    // Función para actualizar las opciones del selector de horaFin según la horaInicio seleccionada
     function actualizarHorasFin() {
         const inicioSeleccionado = horaInicioSelect.value;
         const indexInicio = horas.indexOf(inicioSeleccionado);
 
-        // Deshabilita las opciones de hora de fin que sean anteriores a la hora de inicio
+        // Recorre todas las opciones de horaFin y deshabilita las que sean anteriores a la horaInicio
         Array.from(horaFinSelect.options).forEach(option => {
             const indexOption = horas.indexOf(option.value);
             option.disabled = indexOption < indexInicio;
         });
 
-        // Si la hora de fin ya no es válida, se resetea su valor
+        // Si la horaFin actualmente seleccionada ya no es válida, la resetea (vacía)
         if (horaFinSelect.value && horas.indexOf(horaFinSelect.value) < indexInicio) {
             horaFinSelect.value = '';
         }
     }
 
-    // Ejecuta la validación cuando se cambia la hora de inicio
+    // Ejecuta la función para actualizar las horas fin cuando cambia la hora inicio
     horaInicioSelect.addEventListener("change", actualizarHorasFin);
-    actualizarHorasFin(); // Llama al cargar por si ya había valores preestablecidos
+    // Llama a la función al cargar para asegurar que las opciones estén correctamente configuradas
+    actualizarHorasFin();
 
     // Maneja el evento de envío del formulario
     form.addEventListener("submit", async (event) => {
-        event.preventDefault(); // Previene el envío tradicional del formulario
+        event.preventDefault(); // Previene el envío estándar para manejarlo con JavaScript
 
-        // Valida que la hora de fin no sea anterior a la de inicio
+        // Valida que la hora fin no sea anterior a la hora inicio usando los índices en el array 'horas'
         const indexInicio = horas.indexOf(horaInicioSelect.value);
         const indexFin = horas.indexOf(horaFinSelect.value);
 
         if (indexInicio > indexFin) {
             alert("La hora final no puede ser anterior a la de inicio.");
-            return;
+            return; // Detiene el envío si la validación falla
         }
 
-        // Construye el objeto a enviar al servidor
+        // Construye el objeto con los datos que se enviarán al backend para actualizar la ausencia
         const payload = {
             fecha: fechaInput.value,
             motivo: motivoInput.value,
@@ -78,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            // Realiza una solicitud PUT al servidor para actualizar la ausencia
+            // Hace la petición PUT para actualizar la ausencia con el ID correspondiente
             const response = await fetch(`http://localhost:8080/ausencias/${ausenciaId}`, {
                 method: "PUT",
                 headers: {
@@ -87,23 +88,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(payload)
             });
 
-            // Si hay un error en la respuesta, lanza una excepción con el mensaje del servidor
+            // Si la respuesta no es exitosa, extrae el mensaje de error y lanza excepción
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Error al actualizar la ausencia");
             }
 
-            // Muestra un mensaje de éxito temporalmente
+            // Muestra un mensaje de éxito en la interfaz
             successMessage.style.display = "block";
 
-            // Después de 2 segundos, oculta el mensaje y redirige a la página principal
+            // Después de 2 segundos oculta el mensaje y redirige a la página principal de ausencias
             setTimeout(() => {
                 successMessage.style.display = "none";
                 window.location.href = "index-ausencia-guardia.html";
             }, 2000);
 
         } catch (error) {
-            // Muestra el error al usuario y en la consola
+            // Muestra un alert con el error y también lo muestra en consola para debugging
             alert(error.message);
             console.error("Detalle:", error);
         }

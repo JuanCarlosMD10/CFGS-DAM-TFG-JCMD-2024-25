@@ -1,105 +1,111 @@
-// Array para almacenar las ausencias que se obtendrán desde el backend
+// Array para almacenar las ausencias obtenidas desde el backend
 let ausencias = [];
 
 // Espera a que todo el contenido del DOM esté completamente cargado
 document.addEventListener("DOMContentLoaded", () => {
-    // Carga las ausencias desde el servidor
+    // Carga las ausencias desde el servidor al cargar la página
     cargarAusencias();
 
     // Configura el botón "Confirmar" para redirigir a la página de modificación
     document.getElementById("confirm-btn").addEventListener("click", () => {
-        // Obtiene la ausencia seleccionada (radio button)
+        // Obtiene el radio button seleccionado que representa una ausencia
         const selectedRadio = document.querySelector('input[name="ausencia"]:checked');
 
-        // Si no hay ninguna ausencia seleccionada, muestra un mensaje de alerta
+        // Si no se seleccionó ninguna ausencia, muestra una alerta y detiene la ejecución
         if (!selectedRadio) {
             alert("Por favor, selecciona una ausencia para continuar.");
             return;
         }
 
-        // Busca la ausencia correspondiente en el array usando el ID
+        // Obtiene el ID de la ausencia seleccionada
         const ausenciaId = selectedRadio.value;
+        // Busca la ausencia en el array 'ausencias' usando el ID
         const ausencia = ausencias.find(a => a.idAusencia == ausenciaId);
 
-        // Si no se encuentra la ausencia seleccionada, muestra un error
+        // Si no se encontró la ausencia seleccionada, muestra un error
         if (!ausencia) {
             alert("No se ha podido encontrar la ausencia seleccionada.");
             return;
         }
 
-        // Construye los parámetros de la URL con los datos de la ausencia
+        // Crea los parámetros que se pasarán por URL con los datos de la ausencia
         const params = new URLSearchParams({
             id: ausencia.idAusencia,
             fecha: ausencia.fecha,
             motivo: ausencia.motivo,
             horaInicio: ausencia.horaInicio,
             horaFin: ausencia.horaFin,
-            comentarioTareas: ausencia.tareaAlumnado ?? "" // Usa valor por defecto si es null/undefined
+            comentarioTareas: ausencia.tareaAlumnado ?? "" // Si no existe, pone cadena vacía
         });
 
-        // Redirige a la página de modificación con los parámetros en la URL
+        // Redirige a la página de modificar ausencia con los parámetros en la URL
         window.location.href = `../HTML/modificar-ausencia.html?${params.toString()}`;
     });
 
-    // Habilita el botón de confirmar cuando se selecciona una ausencia
+    // Habilita el botón "Confirmar" cuando se selecciona alguna ausencia en la lista
     document.getElementById("absence-list").addEventListener("change", () => {
         document.getElementById("confirm-btn").disabled = false;
     });
 });
 
-// Función asíncrona que carga las ausencias del backend
+// Función asíncrona que carga las ausencias desde el backend
 async function cargarAusencias() {
+    // Obtiene el contenedor donde se listarán las ausencias
     const absenceList = document.getElementById("absence-list");
+    // Muestra mensaje de carga mientras se obtienen los datos
     absenceList.innerHTML = "<li>Cargando ausencias...</li>";
 
     try {
-        // Hace una solicitud GET al servidor para obtener las ausencias del profesor con ID 1
+        // Solicita al backend las ausencias del profesor con ID 1 (puedes parametrizar esto)
         const response = await fetch('http://localhost:8080/ausencias/profesor/1');
 
-        // Lanza un error si la respuesta no es exitosa
+        // Si la respuesta no es exitosa, lanza un error
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
-        // Convierte la respuesta JSON en un array y la guarda
+        // Convierte la respuesta JSON en un array y lo guarda en la variable global
         ausencias = await response.json();
+        // Limpia el contenedor para mostrar las ausencias
         absenceList.innerHTML = "";
 
-        // Si no hay ausencias, muestra un mensaje apropiado
+        // Si no hay ausencias, muestra un mensaje indicando que no hay datos
         if (ausencias.length === 0) {
             absenceList.innerHTML = "<li>No hay ausencias registradas.</li>";
             return;
         }
 
-        // Crea dinámicamente elementos HTML para mostrar cada ausencia
+        // Recorre cada ausencia y crea elementos HTML para mostrarlas
         ausencias.forEach((ausencia) => {
             const li = document.createElement("li");
             const label = document.createElement("label");
             const input = document.createElement("input");
 
-            input.type = "radio";                      // Tipo radio para seleccionar una sola opción
-            input.name = "ausencia";                   // Grupo de radios con el mismo nombre
-            input.value = ausencia.idAusencia;         // Valor del radio: el ID de la ausencia
-            input.classList.add("absence-checkbox");   // Clase para aplicar estilos si es necesario
+            // Crea un radio button para seleccionar la ausencia
+            input.type = "radio";                      // Radio para selección única
+            input.name = "ausencia";                   // Mismo nombre para agrupar radios
+            input.value = ausencia.idAusencia;         // Valor: el ID único de la ausencia
+            input.classList.add("absence-checkbox");   // Clase para estilos (opcional)
 
-            // Valores por defecto si los campos vienen vacíos o null
+            // Valores por defecto para evitar mostrar undefined o null
             const motivo = ausencia.motivo ?? "Motivo no especificado";
             const fecha = ausencia.fecha ?? "Fecha desconocida";
 
-            // Texto que se mostrará en la opción de ausencia
+            // Texto que se muestra al lado del radio button
             const texto = `Fecha: ${fecha} | Motivo: ${motivo}`;
 
-            // Agrega el input y el texto al label, luego al li y finalmente a la lista
+            // Agrega el input y el texto al label, y este al elemento de la lista
             label.appendChild(input);
             label.append(` ${texto}`);
             li.appendChild(label);
             absenceList.appendChild(li);
         });
 
-        // Desactiva el botón de confirmación hasta que se seleccione una ausencia
+        // Desactiva el botón de confirmación hasta que el usuario seleccione una ausencia
         document.getElementById("confirm-btn").disabled = true;
 
     } catch (error) {
-        // Muestra un mensaje de error en consola y en la página si falla la carga
+        // Si ocurre un error en la petición o procesamiento, lo muestra por consola
         console.error("Error al cargar ausencias:", error);
+        // Y muestra un mensaje de error en el contenedor de la lista
         absenceList.innerHTML = "<li>Error al cargar ausencias.</li>";
     }
 }

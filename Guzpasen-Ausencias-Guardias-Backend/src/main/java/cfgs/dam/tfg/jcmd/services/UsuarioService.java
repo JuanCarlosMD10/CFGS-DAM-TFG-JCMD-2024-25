@@ -58,5 +58,11 @@ public interface UsuarioService {
 	 */
 	boolean existsByGeneratedUsername(String username);
 	
+	/**
+     * Busca un usuario por su dirección de correo electrónico.
+     * 
+     * @param email Correo electrónico del usuario.
+     * @return Objeto correspondiente al email proporcionado.
+     */
 	UsuarioModelo findByEmail(String email) throws UsuarioNotFoundException;
 }

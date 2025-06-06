@@ -4,11 +4,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configura CORS global para permitir peticiones desde cualquier origen.
+ * 
+ * Habilita los métodos GET, POST, PUT y DELETE con cualquier encabezado.
+ * Útil en desarrollo; se recomienda restringir en producción.
+ */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("*") // Permite todos los orígenes (en desarrollo)
-				.allowedMethods("GET", "POST", "PUT", "DELETE").allowedHeaders("*");
-	}
+
+    /**
+     * Define las reglas CORS para todas las rutas.
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*");
+    }
 }

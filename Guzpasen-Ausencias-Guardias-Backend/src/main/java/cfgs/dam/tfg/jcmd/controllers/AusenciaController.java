@@ -47,6 +47,12 @@ public class AusenciaController {
         return ausenciaService.registrarAusencia(ausencia);
     }
     
+    /**
+     * Registra una nueva ausencia para un profesor.
+     * 
+     * @param ausencia Datos de la ausencia a registrar.
+     * @return Objeto AusenciaDTO con la información registrada.
+     */
     @PostMapping("/profesor/{idProfesor}")
     public AusenciaDTO registrarAusenciaConCualquierIdDeProfesor(@RequestBody AusenciaModelo ausencia) {
         return ausenciaService.registrarAusencia(ausencia);
